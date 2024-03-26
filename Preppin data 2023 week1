@@ -4,7 +4,7 @@ SUM(value) as total_value
 FROM pd2023_wk01
 GROUP BY SPLIT_PART(transaction_code,'-',1);
 
--- 2. Total Values by Bank, Day of the Week and Type of Transaction (Online or In-Person)
+2. Total Values by Bank, Day of the Week and Type of Transaction (Online or In-Person)
 SELECT
 SPLIT_PART(transaction_code,'-',1) as bank,
 CASE 
@@ -16,7 +16,7 @@ SUM(value) as total_value
 FROM pd2023_wk01
 GROUP BY 1,2,3;
 
--- 3. Total Values by Bank and Customer Code
+3. Total Values by Bank and Customer Code
 SELECT
 SPLIT_PART(transaction_code,'-',1) as bank,
 customer_code,
