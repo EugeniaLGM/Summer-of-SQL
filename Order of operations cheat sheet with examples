@@ -1,0 +1,294 @@
+--------------------------------------------------------------SELECT--------------------------
+SELECT * FROM "Superstore_Orders" ; 
+
+--Get Product names query
+SELECT "Order ID", "Product Name"
+FROM "Superstore_Orders" ; 
+
+--Select distinct (unique tool)
+SELECT DISTINCT "Product Name"
+FROM "Superstore_Orders" ; 
+
+--Select distinct variables
+SELECT DISTINCT "Product Name", "Segment"
+FROM "Superstore_Orders" ; 
+
+--------------------------------------------------------------WHERE------------------------------------------------------------
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Region"='Central';
+
+--unique products and state in central region-----
+SELECT DISTINCT "Product Name","State"
+FROM "Superstore_Orders" 
+WHERE "Region"='Central';
+
+SELECT DISTINCT "Region", "State"
+FROM "Superstore_Orders" 
+WHERE "Region" !='Central';
+
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Sales">5000;
+
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Quantity" BETWEEN 5 AND 100;
+
+SELECT DISTINCT "Product Name"
+FROM "Superstore_Orders" 
+WHERE "Product Name" LIKE 'B%';
+
+SELECT DISTINCT "City"
+FROM "Superstore_Orders" 
+WHERE "City" LIKE '%towns%';
+
+SELECT DISTINCT "Product Name"
+FROM "Superstore_Orders" 
+WHERE "Product Name" LIKE '%d';
+
+SELECT DISTINCT "City"
+FROM "Superstore_Orders" 
+WHERE "State" IN ('Alabama','Georgia','Florida');
+
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Quantity" BETWEEN 10 AND 100
+AND "Sales">1000;
+
+
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Region"='Central' 
+OR "Segment"= 'Home Office';
+
+SELECT *
+FROM "Superstore_Orders" 
+WHERE "Profit"<0
+AND (
+"State"='Illinois'
+OR 
+"Region"='East'
+    );
+    
+    ----------------------------------------ORDER BY---------------------------------------------------
+    SELECT DISTINCT "State"
+FROM "Superstore_Orders" 
+ORDER BY "State" DESC;
+
+ SELECT DISTINCT "State", "City"
+FROM "Superstore_Orders" 
+ORDER BY "State", "City" DESC;
+
+SELECT "Order ID", "State", "City" ,"Sales"
+FROM "Superstore_Orders" 
+WHERE "City" LIKE '%ville'
+ORDER BY "State", "City";
+
+ --------------------------------------------SELECT TOP---------------------------------------------------
+SELECT TOP 10 *
+FROM "Superstore_Orders";
+
+SELECT *
+FROM "Superstore_Orders" 
+LIMIT 10;
+
+
+
+SELECT * 
+FROM "Superstore_Orders" 
+WHERE "Profit" > 50
+AND "Sales" <500
+ORDER BY "Profit" ASC
+LIMIT 20;
+
+--------------------------------------------ALIAS--------------------------------------------------
+
+ SELECT DISTINCT "Product Name" as "Product"
+FROM "Superstore_Orders" 
+ORDER BY "Product";
+
+SELECT DISTINCT "Product Name" as Product
+FROM "Superstore_Orders" as Ord
+ORDER BY Product;
+
+--------------------------------------------AGGREGATE--------------------------------------------------
+SELECT count (*)
+FROM "Superstore_Orders";
+
+SELECT SUM("Quantity") as total_quantity
+FROM "Superstore_Orders";
+
+SELECT 
+SUM("Quantity") as total_quantity, 
+SUM ("Sales") as total_sales,
+SUM ("Profit") as total_profit,
+avg ("Discount") as avg_discount,
+total_profit/total_sales as profit_ratio,
+SUM ("Discount")/count(distinct "Order ID") as discount_per_order
+FROM "Superstore_Orders";
+
+
+SELECT avg("Profit") as avg_profit
+FROM "Superstore_Orders"
+WHERE "Ship Mode"='First Class'
+AND(
+"Region"='Central'
+OR 
+"Region"= 'West');
+
+
+
+SELECT count(DISTINCT "Order ID")
+FROM "Superstore_Orders";
+WHERE "State" LIKE  '%h%';
+
+SELECT 
+count(DISTINCT "Order ID") as order_count,
+count(DISTINCT "Product Name") as product_count
+FROM "Superstore_Orders"
+WHERE "State" ILIKE  '%h%';
+
+SELECT min ("Profit") as min_profit
+FROM "Superstore_Orders";
+
+SELECT max ("Profit") as max_profit
+FROM "Superstore_Orders";
+
+SELECT 
+"Product Name" as product,
+sum ("Quantity") as total_quantity
+FROM "Superstore_Orders"
+WHERE product LIKE 'B%'
+GROUP BY product
+Order by total_quantity desc
+LIMIT 10;
+
+
+
+SELECT "Region", "Ship Mode" ,
+avg("Profit") as avg_profit
+FROM "Superstore_Orders"
+WHERE "Region"='Central'
+OR 
+"Region"= 'West'
+Group by "Region","Ship Mode";
+
+
+--------------------------------------------HAVING--------------------------------------------------
+
+SELECT 
+"Order Date" as day,
+avg ("Profit")as avg_profit
+FROM "Superstore_Orders"
+WHERE day> '2020-01-01'
+GROUP BY day
+HAVING avg_profit>500
+ORDER BY avg_profit desc
+;
+
+SELECT 
+
+sum("Sales") as total_sales,
+sum("Profit"/total_sales as profit_ratio
+FROM "Superstore_Orders"
+Where "Ship Mode"= 'Standard Class'
+
+;
+    
+    
+    --------------------------------------------SCALAR FUNCTIONS--------------------------------------------------
+    
+    SELECT DISTINCT UPPER("Product Name"), ("Sales")
+    FROM "Superstore_Orders"
+    WHERE "Sales"> 2000
+    AND "Region" ='West'
+    ORDER BY "Sales" DESC;
+    
+    SELECT UPPER("Sub-Category"), 
+    sum("Sales") as total_sales,
+    sum("Profit")/total_sales as profit_ratio
+    FROM "Superstore_Orders"
+    WHERE "Region"='West'
+    GROUP BY "Sub-Category"
+ HAVING total_sales>1000
+    AND sum("Profit")>100
+    ORDER BY 'profit_ratio' DESC;
+    
+    
+    SELECT DISTINCT ("Product Name")
+    from    "Superstore_Orders"
+    WHERE substr("Product Name",6,3)='wes';
+    
+    SELECT "City",
+   REPLACE ("City",'ville','banana') AS new_city
+    SUM ("Sales") as 'total_sales'
+    FROM "Superstore_Orders"
+    WHERE "City" ILIKE '%ville%'
+    GROUP BY "City"
+    ORDER BY "City" DESC;
+   
+    
+    SELECT DISTINCT "Order Date",
+    GETDATE() AS current_date,
+    datediff(day, 'Order Date', 'Ship Date')
+    FROM "Superstore_Orders";
+    
+    --------------------------------------------SCALAR FUNCTIONS--------------------------------------------------
+    SELECT SUM(t1."Sales"), t2."Person" 
+    FROM "Superstore_Orders" as t1
+    INNER JOIN "Superstore_People" as t2
+    ON t1."Region"=t2."Region"
+    GROUP BY t2. "Person";
+    
+    SELECT 
+   t1. "Region",
+    round(SUM("Sales"),0) as Sales
+    FROM "Superstore_Orders" t1
+   LEFT JOIN "Superstore_Returns" t2
+    ON t1."Order ID"=t2. "Order ID"
+    GROUP BY t1."Region"
+    ORDER BY t1."Region" DESC;
+    
+    
+    SELECT 
+   t1. "Region", t2. "Returned",
+    round(SUM("Sales"),0) as Sales
+    FROM "Superstore_Orders" t1
+    RIGHT JOIN "Superstore_Returns" t2
+    ON t1."Order ID"=t2. "Order ID"
+    GROUP BY t1."Region", t2."Returned"
+    ORDER BY t2."Returned" DESC;
+    
+    
+    SELECT 
+    t1. "Segment", t1."State",t2."Returned",t1."Sales",
+     SUM("Sales") as total_sales,
+    count(DISTINCT "Order ID")
+    FROM "Superstore_Orders" t1
+    LEFT JOIN "Superstore_Returns" t2
+        ON t1."Order ID"= t2."Order ID"
+    LEFT JOIN "Superstore_People" t3
+    ON t1. "Region"=t3. "Region"
+    WHERE "State"='South'
+    GROUP BY t1. "Segment", t1."Sales", t1."State", t2."Returned"
+    ORDER BY t1. "Segment", t1."Sales";
+    
+    
+    
+    SELECT 
+    t1."Segment"
+    , t1."State"
+    ,t2."Person"
+    ,SUM(t1."Sales") as total_sales,
+    count(DISTINCT t1."Order ID") as total_orders
+    FROM TIL_PLAYGROUND.KEEP."Superstore_Orders"t1
+    INNER JOIN "Superstore_People" t2
+    ON t1. "Region"=t2. "Region"
+  LEFT JOIN "Superstore_Returns" t3
+        ON t1."Order ID"= t3."Order ID"
+     WHERE t1."Region"='South'
+    GROUP BY t1."State"
+    , t1."Segment"
+    ,t2."Person"
+    Order BY t1."Segment" , total_sales DESC;
