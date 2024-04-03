@@ -22,8 +22,7 @@ CASE
         WHEN DATE_PART('quarter', TO_DATE(transaction_date, 'DD/MM/YYYY HH24:MI:SS')) = 4 THEN 'Q4'
     END AS QUARTERS,
     
-    SUM(value) AS total_value
-
+    SUM(value) AS total_value,
 from pd2023_wk01 
 where transaction_code like 'DSB%'
 
@@ -33,7 +32,7 @@ SELECT vlz.online_or_in_person
 , vlz.quarters
 , total_value
 , target
+, total_value - target AS Varience_from_target
 FROM vlz INNER JOIN tgts ON vlz.quarters = tgts.quarters AND vlz.online_or_in_person = tgts.online_or_in_person
 
 ;
-
