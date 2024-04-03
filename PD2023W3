@@ -1,0 +1,39 @@
+WITH tgts AS (
+SELECT *
+ 
+from pd2023_wk03_targets
+
+UNPIVOT ( target
+         FOR Quarters IN (Q1,Q2,Q3,Q4) ))
+
+, vlz AS(
+select 
+
+CASE
+when pd2023_wk01.ONLINE_OR_IN_PERSON = 1 then 'Online'
+WHEN pd2023_wk01.online_or_in_person = 2 then 'In-Person'
+end as ONLINE_OR_IN_PERSON,
+
+
+CASE 
+       WHEN DATE_PART('quarter', TO_DATE(transaction_date, 'DD/MM/YYYY HH24:MI:SS')) = 1 THEN 'Q1'
+        WHEN DATE_PART('quarter', TO_DATE(transaction_date, 'DD/MM/YYYY HH24:MI:SS')) = 2 THEN 'Q2'
+        WHEN DATE_PART('quarter', TO_DATE(transaction_date, 'DD/MM/YYYY HH24:MI:SS')) = 3 THEN 'Q3'
+        WHEN DATE_PART('quarter', TO_DATE(transaction_date, 'DD/MM/YYYY HH24:MI:SS')) = 4 THEN 'Q4'
+    END AS QUARTERS,
+    
+    SUM(value) AS total_value
+
+from pd2023_wk01 
+where transaction_code like 'DSB%'
+
+group by online_or_in_person, QUARTERS)
+
+SELECT vlz.online_or_in_person
+, vlz.quarters
+, total_value
+, target
+FROM vlz INNER JOIN tgts ON vlz.quarters = tgts.quarters AND vlz.online_or_in_person = tgts.online_or_in_person
+
+;
+
